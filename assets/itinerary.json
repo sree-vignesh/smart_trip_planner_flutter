@@ -1,0 +1,81 @@
+{
+  "itinerary": {
+    "title": "Mumbai Mid-Budget Getaway",
+    "startDate": "2023-11-10",
+    "endDate": "2023-11-11",
+    "days": [
+      {
+        "date": "2023-11-10",
+        "summary": "Explore iconic South Mumbai landmarks and enjoy the coastal charm.",
+        "items": [
+          {
+            "time": "09:00",
+            "activity": "Visit the majestic Gateway of India, a historic monument.",
+            "location": "18.921984,72.834657"
+          },
+          {
+            "time": "10:30",
+            "activity": "Explore the vibrant Colaba Market for souvenirs and local handicrafts.",
+            "location": "18.9209,72.8319"
+          },
+          {
+            "time": "13:00",
+            "activity": "Lunch at a mid-budget restaurant in Colaba like Leopold Cafe or Cafe Mondegar.",
+            "location": "18.9255,72.8291"
+          },
+          {
+            "time": "15:00",
+            "activity": "Visit the Chhatrapati Shivaji Maharaj Vastu Sangrahalaya (museum).",
+            "location": "18.923485,72.831880"
+          },
+          {
+            "time": "17:00",
+            "activity": "Stroll along Marine Drive (Queen's Necklace) and enjoy the sunset.",
+            "location": "18.9329,72.8229"
+          },
+          {
+            "time": "20:00",
+            "activity": "Dinner at a restaurant with views of Marine Drive or in Fort area.",
+            "location": "18.9288,72.8262"
+          }
+        ]
+      },
+      {
+        "date": "2023-11-11",
+        "summary": "Discover Mumbai's cultural diversity and local life.",
+        "items": [
+          {
+            "time": "09:30",
+            "activity": "Visit Haji Ali Dargah, a beautiful mosque situated on an islet.",
+            "location": "18.9664,72.8094"
+          },
+          {
+            "time": "11:00",
+            "activity": "Experience the unique Dhobi Ghat, the world's largest outdoor laundry.",
+            "location": "18.9804,72.8228"
+          },
+          {
+            "time": "13:00",
+            "activity": "Lunch at a local eatery near Mahalaxmi or Lower Parel.",
+            "location": "18.9815,72.8285"
+          },
+          {
+            "time": "15:00",
+            "activity": "Explore the vibrant Bandra neighborhood, walk along Bandstand, and browse Linking Road.",
+            "location": "19.0577,72.8264"
+          },
+          {
+            "time": "18:00",
+            "activity": "Relax at a cafe in Bandra and enjoy the lively atmosphere.",
+            "location": "19.0558,72.8256"
+          },
+          {
+            "time": "20:00",
+            "activity": "Farewell dinner at a popular restaurant in Bandra.",
+            "location": "19.0537,72.8253"
+          }
+        ]
+      }
+    ]
+  }
+}
