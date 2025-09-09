@@ -1,0 +1,278 @@
+[
+  {
+    "itinerary": {
+      "title": "Solo Munnar Hill Escape",
+      "startDate": "2024-10-01",
+      "endDate": "2024-10-06",
+      "days": [
+        {
+          "date": "2024-10-01",
+          "summary": "Arrival in Munnar and gentle introduction to the town's tea heritage.",
+          "items": [
+            {
+              "time": "12:00",
+              "activity": "Arrive in Munnar, check into mid-range hotel/guesthouse.",
+              "location": "10.0889,77.0595"
+            },
+            {
+              "time": "14:30",
+              "activity": "Visit the KDHP Tea Museum to learn about tea processing and history.",
+              "location": "10.0817,77.0601"
+            },
+            {
+              "time": "17:00",
+              "activity": "Explore Munnar Town, browse local shops for spices and souvenirs.",
+              "location": "10.0889,77.0595"
+            },
+            {
+              "time": "19:30",
+              "activity": "Dinner at a local restaurant, trying Kerala cuisine.",
+              "location": "10.0889,77.0595"
+            }
+          ]
+        },
+        {
+          "date": "2024-10-02",
+          "summary": "Lakes, dams, and scenic viewpoints offering breathtaking vistas.",
+          "items": [
+            {
+              "time": "09:00",
+              "activity": "Visit Mattupetty Dam and enjoy boating.",
+              "location": "10.0841,77.1264"
+            },
+            {
+              "time": "11:00",
+              "activity": "Experience Echo Point, famous for its natural echo phenomenon.",
+              "location": "10.0911,77.1353"
+            },
+            {
+              "time": "13:00",
+              "activity": "Lunch at a roadside eatery near Kundala Lake.",
+              "location": "10.1269,77.1654"
+            },
+            {
+              "time": "14:30",
+              "activity": "Relax by Kundala Lake, enjoying the serene surroundings.",
+              "location": "10.1269,77.1654"
+            },
+            {
+              "time": "16:30",
+              "activity": "Visit the Rose Garden (Floriculture Centre) for various flowers.",
+              "location": "10.0814,77.0620"
+            },
+            {
+              "time": "19:00",
+              "activity": "Return to Munnar for dinner.",
+              "location": "10.0889,77.0595"
+            }
+          ]
+        },
+        {
+          "date": "2024-10-03",
+          "summary": "Wildlife encounters and majestic views from high altitudes.",
+          "items": [
+            {
+              "time": "08:30",
+              "activity": "Morning visit to Eravikulam National Park to spot Nilgiri Tahr.",
+              "location": "10.1706,77.0194"
+            },
+            {
+              "time": "13:00",
+              "activity": "Lunch at a restaurant near the park entrance.",
+              "location": "10.1706,77.0194"
+            },
+            {
+              "time": "15:00",
+              "activity": "Visit Attukad Waterfalls for scenic views (best after monsoon).",
+              "location": "10.0460,77.0360"
+            },
+            {
+              "time": "17:00",
+              "activity": "Enjoy sunset views from Pothamedu View Point.",
+              "location": "10.0818,77.0425"
+            },
+            {
+              "time": "19:30",
+              "activity": "Dinner in Munnar town.",
+              "location": "10.0889,77.0595"
+            }
+          ]
+        },
+        {
+          "date": "2024-10-04",
+          "summary": "Exploring the eastern side of Munnar, leading to panoramic vistas.",
+          "items": [
+            {
+              "time": "09:00",
+              "activity": "Drive to Top Station, enjoying the panoramic views of the Western Ghats.",
+              "location": "10.1293,77.2185"
+            },
+            {
+              "time": "12:00",
+              "activity": "Visit the Anayirangal Dam, surrounded by lush tea plantations.",
+              "location": "9.9472,77.1190"
+            },
+            {
+              "time": "13:30",
+              "activity": "Lunch at a local dhaba or small restaurant en route.",
+              "location": "10.0700,77.1500"
+            },
+            {
+              "time": "15:00",
+              "activity": "Explore a local spice plantation, learning about various spices.",
+              "location": "10.0500,77.0500"
+            },
+            {
+              "time": "17:30",
+              "activity": "Return to Munnar, relax.",
+              "location": "10.0889,77.0595"
+            },
+            {
+              "time": "19:00",
+              "activity": "Evening free for personal leisure or exploring local cafes.",
+              "location": "10.0889,77.0595"
+            }
+          ]
+        },
+        {
+          "date": "2024-10-05",
+          "summary": "Leisurely day for tea estate walks, local culture, or a thrilling jeep safari.",
+          "items": [
+            {
+              "time": "08:00",
+              "activity": "Optional: Early morning jeep safari to Kolukkumalai Tea Estate for sunrise (mid-budget might require sharing).",
+              "location": "10.1287,77.2215"
+            },
+            {
+              "time": "10:30",
+              "activity": "Alternatively, enjoy a guided trek through a nearby tea plantation.",
+              "location": "10.0900,77.0650"
+            },
+            {
+              "time": "13:00",
+              "activity": "Lunch at a local's home or a traditional Kerala thali restaurant.",
+              "location": "10.0889,77.0595"
+            },
+            {
+              "time": "15:00",
+              "activity": "Visit a local village to experience rural life and interact with locals.",
+              "location": "10.0950,77.0450"
+            },
+            {
+              "time": "18:00",
+              "activity": "Souvenir shopping for local tea, spices, and handmade crafts.",
+              "location": "10.0889,77.0595"
+            },
+            {
+              "time": "20:00",
+              "activity": "Farewell dinner, reflecting on the trip.",
+              "location": "10.0889,77.0595"
+            }
+          ]
+        },
+        {
+          "date": "2024-10-06",
+          "summary": "Enjoying a final Munnar breakfast before departure.",
+          "items": [
+            {
+              "time": "09:00",
+              "activity": "Enjoy a leisurely breakfast at the hotel/guesthouse.",
+              "location": "10.0889,77.0595"
+            },
+            {
+              "time": "11:00",
+              "activity": "Check-out and depart from Munnar.",
+              "location": "10.0889,77.0595"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "itinerary": {
+      "title": "Mumbai Solo Sojourn: A 2-Day Mid-Budget Escape",
+      "startDate": "2024-10-26",
+      "endDate": "2024-10-27",
+      "days": [
+        {
+          "date": "2024-10-26",
+          "summary": "Immerse yourself in South Mumbai's iconic landmarks, history, and vibrant street life, culminating in a beautiful sunset.",
+          "items": [
+            {
+              "time": "10:00",
+              "activity": "Arrive in Mumbai, check into your mid-range hotel. Head to Colaba to start your exploration.",
+              "location": "18.92198,72.83465"
+            },
+            {
+              "time": "10:30",
+              "activity": "Visit the majestic Gateway of India and admire the grand Taj Mahal Palace Hotel (outside view).",
+              "location": "18.92198,72.83465"
+            },
+            {
+              "time": "12:30",
+              "activity": "Enjoy a delicious lunch at the iconic Cafe Mondegar, famous for its retro vibe and delicious food.",
+              "location": "18.92340,72.83290"
+            },
+            {
+              "time": "14:00",
+              "activity": "Explore the Chhatrapati Shivaji Maharaj Vastu Sangrahalaya (CSMVS), one of India's premier museums.",
+              "location": "18.92760,72.83100"
+            },
+            {
+              "time": "16:30",
+              "activity": "Stroll and shop for souvenirs and quirky finds at the bustling Colaba Causeway market.",
+              "location": "18.92360,72.83310"
+            },
+            {
+              "time": "18:30",
+              "activity": "Witness a stunning sunset and take a leisurely walk along Marine Drive, also known as the Queen's Necklace.",
+              "location": "18.94310,72.81880"
+            },
+            {
+              "time": "20:00",
+              "activity": "Savor dinner at a local mid-budget restaurant in the Fort area, offering authentic Mumbai flavors.",
+              "location": "18.93200,72.83000"
+            }
+          ]
+        },
+        {
+          "date": "2024-10-27",
+          "summary": "Discover Mumbai's unique cultural facets, modern marvels, and local shopping scenes before preparing for departure.",
+          "items": [
+            {
+              "time": "09:00",
+              "activity": "Witness the spectacle of Dhobi Ghat, the world's largest outdoor laundry, from the bridge vantage point.",
+              "location": "18.97740,72.81660"
+            },
+            {
+              "time": "10:30",
+              "activity": "Take a taxi across the impressive Bandra-Worli Sea Link (toll extra) and enjoy a walk at Bandstand Promenade.",
+              "location": "19.05380,72.81660"
+            },
+            {
+              "time": "12:30",
+              "activity": "Have lunch at a trendy yet affordable cafe in Bandra, known for its vibrant food scene.",
+              "location": "19.06000,72.83000"
+            },
+            {
+              "time": "14:30",
+              "activity": "Explore Linking Road or Hill Road in Bandra for some local street shopping and unique finds.",
+              "location": "19.06070,72.83390"
+            },
+            {
+              "time": "16:30",
+              "activity": "Visit the serene Haji Ali Dargah, a mosque located on an islet in the Arabian Sea (check tide timings).",
+              "location": "18.96630,72.80910"
+            },
+            {
+              "time": "18:00",
+              "activity": "Head back to your hotel, pack up, and prepare for your departure from Mumbai.",
+              "location": "18.92198,72.83465"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

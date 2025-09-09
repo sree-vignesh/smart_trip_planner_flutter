@@ -3,9 +3,13 @@ import 'package:flutter/services.dart';
 import '../models/itinerary.dart';
 
 class JsonService {
-  Future<Itinerary> loadItinerary() async {
-    final data = await rootBundle.loadString('assets/itinerary.json');
-    final jsonData = json.decode(data);
-    return Itinerary.fromJson(jsonData['itinerary']);
+  Future<List<Itinerary>> loadItineraries() async {
+    final data = await rootBundle.loadString('assets/itineraries.json');
+    final List<dynamic> jsonList = jsonDecode(data);
+
+    return jsonList.map((e) {
+      final itineraryJson = e['itinerary']; // 👈 pick nested object
+      return Itinerary.fromJson(itineraryJson);
+    }).toList();
   }
 }
