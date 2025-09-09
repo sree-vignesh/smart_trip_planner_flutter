@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:smart_trip_planner/models/itinerary.dart';
-import '../services/dummy_itinerary_service.dart';
+import '../services/itinerary_api_service.dart';
 
 class ChatScreen extends StatefulWidget {
   final String prompt;
@@ -17,87 +17,111 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> messages = [];
   bool savedOffline = false;
+  bool isLoading = false; // Track API request state
 
-  // Store the dummy itinerary data for offline save
   Map<String, dynamic>? _latestItineraryData;
+  final ItineraryApiService apiService = ItineraryApiService(
+    baseUrl: 'http://192.168.31.162:8080/itinerary',
+  );
 
   @override
   void initState() {
     super.initState();
-    _addDummyAIResponse(widget.prompt);
+    _fetchAIResponse(widget.prompt);
   }
 
-  /// Add a dummy AI response for the prompt
-  void _addDummyAIResponse(String prompt) async {
+  /// Fetch itinerary from real API
+  void _fetchAIResponse(String prompt) async {
     setState(() {
       messages.add({"role": "user", "text": prompt});
+      messages.add({"role": "status", "text": "Sending..."});
+      isLoading = true;
     });
 
-    // Get dummy itinerary from service
-    final dummyData = DummyItineraryService.generateMap(prompt);
-    _latestItineraryData = dummyData;
+    try {
+      final data = await apiService.fetchItinerary(prompt);
+      _latestItineraryData = data;
 
-    // Convert itinerary into readable chat text
-    final itinerary = Itinerary.fromJson(dummyData['itinerary']);
-    final itineraryText = StringBuffer();
-    for (var day in itinerary.days) {
-      itineraryText.writeln("${day.date} - ${day.summary}");
-      for (var item in day.items) {
-        itineraryText.writeln("${item.time} - ${item.activity}");
+      final itinerary = Itinerary.fromJson(data['itinerary']);
+      final itineraryText = StringBuffer();
+
+      for (var day in itinerary.days) {
+        itineraryText.writeln("${day.date} - ${day.summary}");
+        for (var item in day.items) {
+          itineraryText.writeln("${item.time} - ${item.activity}");
+        }
+        itineraryText.writeln("");
       }
-      itineraryText.writeln(""); // blank line between days
-    }
 
-    setState(() {
-      messages.add({"role": "ai", "text": itineraryText.toString()});
-    });
+      setState(() {
+        // Remove status message and add AI response
+        messages.removeWhere((m) => m['role'] == 'status');
+        messages.add({"role": "ai", "text": itineraryText.toString()});
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        messages.removeWhere((m) => m['role'] == 'status');
+        messages.add({"role": "ai", "text": "Server unreachable or error: $e"});
+        isLoading = false;
+      });
+    }
   }
 
   /// Handle follow-up messages
-  void _sendFollowUp() {
+  void _sendFollowUp() async {
     final text = _controller.text.trim();
-    if (text.isEmpty || savedOffline) return;
+    if (text.isEmpty || savedOffline || isLoading) return;
 
     setState(() {
       messages.add({"role": "user", "text": text});
-      messages.add(DummyItineraryService.followUpMap(text));
+      messages.add({"role": "status", "text": "Sending..."});
+      isLoading = true;
     });
+
     _controller.clear();
+
+    try {
+      final data = await apiService.fetchItinerary(text);
+      _latestItineraryData = data;
+
+      final itinerary = Itinerary.fromJson(data['itinerary']);
+      final itineraryText = StringBuffer();
+
+      for (var day in itinerary.days) {
+        itineraryText.writeln("${day.date} - ${day.summary}");
+        for (var item in day.items) {
+          itineraryText.writeln("${item.time} - ${item.activity}");
+        }
+        itineraryText.writeln("");
+      }
+
+      setState(() {
+        messages.removeWhere((m) => m['role'] == 'status');
+        messages.add({"role": "ai", "text": itineraryText.toString()});
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        messages.removeWhere((m) => m['role'] == 'status');
+        messages.add({"role": "ai", "text": "Server unreachable or error: $e"});
+        isLoading = false;
+      });
+    }
   }
 
-  /// Save the itinerary offline to SharedPreferences
+  /// Save the latest itinerary offline
   Future<void> _saveOffline() async {
+    if (_latestItineraryData == null) return;
+
     final prefs = await SharedPreferences.getInstance();
-
-    // Create itinerary in the full JSON schema
-    final itinerary = {
-      "itinerary": {
-        "title": widget.prompt,
-        "startDate": DateTime.now().toIso8601String(),
-        "endDate": DateTime.now()
-            .add(const Duration(days: 2))
-            .toIso8601String(),
-        "days": [
-          {
-            "date": DateTime.now().toIso8601String().split("T").first,
-            "summary": "Dummy day based on your prompt",
-            "items": messages
-                .map(
-                  (m) => {
-                    "time": "09:00",
-                    "activity": m['text'] ?? '',
-                    "location": "0.0000,0.0000",
-                  },
-                )
-                .toList(),
-          },
-        ],
-      },
-    };
-
     List<String> saved = prefs.getStringList("saved_itineraries") ?? [];
-    saved.add(jsonEncode(itinerary));
+    saved.add(jsonEncode(_latestItineraryData));
     await prefs.setStringList("saved_itineraries", saved);
+
+    setState(() {
+      savedOffline = true;
+    });
 
     ScaffoldMessenger.of(
       context,
@@ -118,7 +142,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
                   final msg = messages[index];
-                  final isUser = msg['role'] == 'user';
+                  final role = msg['role'];
+                  final isUser = role == 'user';
+                  final isStatus = role == 'status';
+
                   return Align(
                     alignment: isUser
                         ? Alignment.centerRight
@@ -127,7 +154,11 @@ class _ChatScreenState extends State<ChatScreen> {
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: isUser ? Colors.blue[200] : Colors.grey[300],
+                        color: isUser
+                            ? Colors.blue[200]
+                            : isStatus
+                            ? Colors.orange[200]
+                            : Colors.grey[300],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -149,15 +180,18 @@ class _ChatScreenState extends State<ChatScreen> {
                     Expanded(
                       child: TextField(
                         controller: _controller,
-                        decoration: const InputDecoration(
-                          hintText: "Type follow-up",
-                          border: OutlineInputBorder(),
+                        enabled: !isLoading,
+                        decoration: InputDecoration(
+                          hintText: isLoading
+                              ? "Awaiting response..."
+                              : "Type follow-up",
+                          border: const OutlineInputBorder(),
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
-                      onPressed: _sendFollowUp,
+                      onPressed: isLoading ? null : _sendFollowUp,
                       child: const Text("Send"),
                     ),
                   ],
