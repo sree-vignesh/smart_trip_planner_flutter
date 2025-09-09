@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Smart Trip Planner',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.green),
       home: FutureBuilder<Itinerary>(
         future: JsonService().loadItinerary(),
         builder: (context, snapshot) {
