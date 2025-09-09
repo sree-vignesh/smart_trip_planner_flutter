@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_trip_planner/core/colors.dart';
 import 'dart:convert';
 import 'package:smart_trip_planner/models/itinerary.dart';
 import '../services/itinerary_api_service.dart';
@@ -21,7 +23,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Map<String, dynamic>? _latestItineraryData;
   final ItineraryApiService apiService = ItineraryApiService(
-    baseUrl: 'http://192.168.31.162:8080/stream-itinerary',
+    baseUrl: 'http://192.168.31.162:8080/itinerary',
   );
 
   @override
@@ -34,7 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _fetchAIResponse(String prompt) async {
     setState(() {
       messages.add({"role": "user", "text": prompt});
-      messages.add({"role": "status", "text": "Sending..."});
+      messages.add({"role": "status", "text": "Thinking..."});
       isLoading = true;
     });
 
@@ -62,7 +64,10 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       setState(() {
         messages.removeWhere((m) => m['role'] == 'status');
-        messages.add({"role": "ai", "text": "Server unreachable or error: $e"});
+        messages.add({
+          "role": "ai",
+          "text": "Oops! The LLM failed to generate answer. Please regenerate.",
+        });
         isLoading = false;
       });
     }
@@ -75,7 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     setState(() {
       messages.add({"role": "user", "text": text});
-      messages.add({"role": "status", "text": "Sending..."});
+      messages.add({"role": "status", "text": "Rethinking..."});
       isLoading = true;
     });
 
@@ -104,7 +109,10 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       setState(() {
         messages.removeWhere((m) => m['role'] == 'status');
-        messages.add({"role": "ai", "text": "Server unreachable or error: $e"});
+        messages.add({
+          "role": "ai",
+          "text": "Oops! The LLM failed to generate answer. Please regenerate.",
+        });
         isLoading = false;
       });
     }
@@ -131,7 +139,13 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Home")),
+      appBar: AppBar(
+        title: const Text(
+          "Home",
+          style: TextStyle(color: Colors.black, fontSize: 24),
+        ),
+        toolbarHeight: 56,
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -147,23 +161,69 @@ class _ChatScreenState extends State<ChatScreen> {
                   final isStatus = role == 'status';
 
                   return Align(
-                    alignment: isUser
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isUser
-                            ? Colors.blue[200]
-                            : isStatus
-                            ? Colors.orange[200]
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(8),
+                    alignment: Alignment.center,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: 300, // minimum width of the message box
+                        maxWidth: 300, // maximum width of the message box
+                        minHeight: 100,
                       ),
-                      child: Text(
-                        msg['text'] ?? "",
-                        style: const TextStyle(fontSize: 14),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.cardBackground,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Avatar + name row
+                            Row(
+                              children: [
+                                // Circle avatar
+                                const SizedBox(height: 50),
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: msg['role'] == 'user'
+                                        ? Colors.green
+                                        : Colors.orange,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                // Name
+                                Text(
+                                  msg['role'] == 'user' ? 'User' : 'Itinera AI',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Message text
+                            Text(
+                              msg['text'] ?? "",
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+                        ),
                       ),
                     ),
                   );
