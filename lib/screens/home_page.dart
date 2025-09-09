@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
     final String jsonStr = await rootBundle.loadString(
       'assets/itineraries.json',
     );
+    // final List<dynamic> assetData = jsonDecode(jsonStr);
     final List<dynamic> assetData = jsonDecode(jsonStr);
 
     final prefs = await SharedPreferences.getInstance();
@@ -44,7 +45,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       savedItineraries = [
         ...offlineData,
-        ...assetData.map((e) => e.cast<String, dynamic>()),
+        // ...assetData.map((e) => e.cast<String, dynamic>()),
       ];
     });
   }
@@ -65,6 +66,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         // centerTitle: true,
         title: Padding(
@@ -74,7 +76,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -133,9 +135,9 @@ class _HomePageState extends State<HomePage> {
               // List of itineraries
               Expanded(
                 child: savedItineraries.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(child: Text("Nothing yet."))
                     : ListView.builder(
-                        reverse: true,
+                        // reverse: true,
                         itemCount: savedItineraries.length,
                         itemBuilder: (context, index) {
                           final itineraryMap =
@@ -147,6 +149,15 @@ class _HomePageState extends State<HomePage> {
                             margin: EdgeInsets.all(10),
 
                             child: ListTile(
+                              // leading: Container(
+                              // width: 12,
+                              // height: 12,
+                              // padding: EdgeInsetsGeometry.all(10),
+                              // decoration: BoxDecoration(
+                              // shape: BoxShape.circle,
+                              // color: AppColors.success,
+                              // ),
+                              // ),
                               title: Text(
                                 itineraryMap['title'] ?? 'No title',
                                 maxLines: 1, // restricts to 1 line
@@ -154,6 +165,11 @@ class _HomePageState extends State<HomePage> {
                                     .ellipsis, // adds "..." if too long
                               ),
                               minTileHeight: 5,
+                              // shape: const RoundedRectangleBorder(
+                              //   borderRadius: BorderRadius.all(
+                              //     Radius.circular(200),
+                              //   ),
+                              // ),
                               // tileColor: AppColors.cardBackground,
                               onTap: () {
                                 final itineraryObj = Itinerary.fromJson(
