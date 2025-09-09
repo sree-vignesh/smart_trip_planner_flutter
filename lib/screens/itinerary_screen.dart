@@ -6,6 +6,23 @@ class ItineraryScreen extends StatelessWidget {
   final Itinerary itinerary;
   const ItineraryScreen({required this.itinerary, super.key});
 
+  // Helper function
+  Future<void> _openMap(BuildContext context, String location) async {
+    final loc = location.isNotEmpty ? location : "0,0";
+    final encodedLocation = Uri.encodeComponent(loc);
+    final uri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$encodedLocation',
+    );
+
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error opening map: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,16 +47,6 @@ class ItineraryScreen extends StatelessWidget {
           final day = itinerary.days[index];
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
             child: Card(
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -69,6 +76,9 @@ class ItineraryScreen extends StatelessWidget {
                   ),
                 ),
                 children: day.items.map((activity) {
+                  final location = activity.location.isNotEmpty
+                      ? activity.location
+                      : "0,0";
                   return Container(
                     margin: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -103,7 +113,7 @@ class ItineraryScreen extends StatelessWidget {
                         ),
                       ),
                       subtitle: Text(
-                        activity.location,
+                        location,
                         style: TextStyle(color: Colors.grey[600], fontSize: 13),
                       ),
                       trailing: IconButton(
@@ -111,20 +121,7 @@ class ItineraryScreen extends StatelessWidget {
                           Icons.map_rounded,
                           color: Colors.blueAccent,
                         ),
-                        onPressed: () async {
-                          final uri = Uri.parse(
-                            'https://www.google.com/maps/search/?api=1&query=${activity.location}',
-                          );
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Could not open map'),
-                              ),
-                            );
-                          }
-                        },
+                        onPressed: () => _openMap(context, activity.location),
                       ),
                     ),
                   );
