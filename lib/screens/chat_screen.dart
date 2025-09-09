@@ -21,7 +21,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Map<String, dynamic>? _latestItineraryData;
   final ItineraryApiService apiService = ItineraryApiService(
-    baseUrl: 'http://192.168.31.162:8080/itinerary',
+    baseUrl: 'http://192.168.31.162:8080/stream-itinerary',
   );
 
   @override
@@ -131,7 +131,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Trip Chat")),
+      appBar: AppBar(title: const Text("Home")),
       body: SafeArea(
         child: Column(
           children: [
@@ -190,9 +190,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: isLoading ? null : _sendFollowUp,
-                      child: const Text("Send"),
+                    SizedBox(
+                      width: 80,
+                      child: ElevatedButton(
+                        onPressed: isLoading ? null : _sendFollowUp,
+                        child: const Text(
+                          "Send",
+                          style: TextStyle(fontSize: 10),
+                        ),
+                      ),
                     ),
                   ],
                 ),

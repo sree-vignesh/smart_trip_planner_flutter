@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_trip_planner/core/colors.dart';
 import 'package:smart_trip_planner/screens/home_page.dart';
 import 'screens/itinerary_screen.dart';
 import 'models/itinerary.dart';
@@ -15,8 +17,43 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Smart Trip Planner',
-      theme: ThemeData(primarySwatch: Colors.green),
-      home: const HomePage(),
+      theme: ThemeData(
+        textTheme: GoogleFonts.interTextTheme(),
+        primarySwatch: Colors.green,
+        scaffoldBackgroundColor: AppColors.background,
+        primaryColor: AppColors.primary,
+        appBarTheme: AppBarTheme(
+          surfaceTintColor: Colors.transparent,
+          toolbarHeight: 90,
+          backgroundColor: AppColors.background,
+          foregroundColor: AppColors.primary,
+          titleTextStyle: GoogleFonts.inter(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: AppColors.primary,
+          ),
+          elevation: 0,
+        ),
+        // Elevated Button Global Theme
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary, // button background
+            foregroundColor: Colors.white, // text color
+            minimumSize: const Size(
+              double.infinity,
+              52,
+            ), // full width, 48px tall
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12), // rounded corners
+            ),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+      home: HomePage(),
     );
   }
 }

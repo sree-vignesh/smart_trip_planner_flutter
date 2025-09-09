@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_trip_planner/core/colors.dart';
 import '../models/itinerary.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,19 +27,19 @@ class ItineraryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(255, 250, 247, 1),
+      // backgroundColor: const Color.fromRGBO(255, 250, 247, 1),
       appBar: AppBar(
         title: Text(
           itinerary.title,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        centerTitle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        ),
+        // backgroundColor: Colors.white,
+        // foregroundColor: Colors.black87,
+        // centerTitle: true,
+        // shape: const RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        // ),
       ),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
@@ -48,6 +49,7 @@ class ItineraryScreen extends StatelessWidget {
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
             child: Card(
+              color: AppColors.cardBackground,
               elevation: 5,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -57,9 +59,9 @@ class ItineraryScreen extends StatelessWidget {
                   horizontal: 20,
                   vertical: 12,
                 ),
-                collapsedBackgroundColor: Colors.white,
-                backgroundColor: Colors.white,
-                iconColor: Colors.blueAccent,
+                // collapsedBackgroundColor: Colors.white,
+                // backgroundColor: Colors.white,
+                iconColor: AppColors.primary,
                 collapsedIconColor: Colors.grey[600],
                 title: Text(
                   day.date,

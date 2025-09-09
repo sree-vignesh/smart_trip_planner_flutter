@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle, SystemUiOverlayStyle;
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_trip_planner/core/colors.dart';
 import 'package:smart_trip_planner/models/itinerary.dart';
 import 'package:smart_trip_planner/screens/itinerary_screen.dart';
 import 'package:smart_trip_planner/screens/chat_screen.dart';
@@ -25,21 +27,17 @@ class _HomePageState extends State<HomePage> {
 
   // Load both JSON asset and SharedPreferences saved itineraries
   Future<void> _loadItineraries() async {
-    // Load JSON asset itineraries
     final String jsonStr = await rootBundle.loadString(
       'assets/itineraries.json',
     );
     final List<dynamic> assetData = jsonDecode(jsonStr);
 
-    // Load offline saved itineraries
     final prefs = await SharedPreferences.getInstance();
     final List<String> offlineList =
         prefs.getStringList("saved_itineraries") ?? [];
 
-    // Decode each offline string
     final List<Map<String, dynamic>> offlineData = offlineList.map((str) {
       final Map<String, dynamic> map = jsonDecode(str);
-      // Each offline entry already has "itinerary" key
       return map.cast<String, dynamic>();
     }).toList();
 
@@ -51,7 +49,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Navigate to ChatScreen and refresh on return
   void _onGeneratePressed() async {
     final prompt = _controller.text.trim();
     if (prompt.isEmpty) return;
@@ -61,103 +58,122 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(builder: (context) => ChatScreen(prompt: prompt)),
     );
 
-    // Refresh saved itineraries automatically after returning
     _loadItineraries();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-      child: Scaffold(
-        extendBodyBehindAppBar: false,
-        appBar: AppBar(
-          title: const Text("Smart Trip Planner"),
-          backgroundColor: const Color.fromARGB(255, 154, 185, 168),
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+    return Scaffold(
+      extendBodyBehindAppBar: false,
+      appBar: AppBar(
+        // centerTitle: true,
+        title: Padding(
+          padding: const EdgeInsets.all(17.5),
+          child: const Text("Hey"),
         ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Prompt input box
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: TextField(
-                    controller: _controller,
-                    minLines: 4,
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    style: const TextStyle(fontSize: 14),
-                    decoration: const InputDecoration(
-                      hintText: "Enter your trip prompt",
-                      border: InputBorder.none,
-                    ),
-                  ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "What's your vision for this trip?",
+                style: GoogleFonts.inter(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w700,
                 ),
-                const SizedBox(height: 12),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
 
-                // Generate button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _onGeneratePressed,
-                    child: const Text("Generate Itinerary"),
+              // Prompt input box
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.primary),
+                  // border
+                ),
+                // width: 200,
+                child: TextField(
+                  controller: _controller,
+                  minLines: 4,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  style: const TextStyle(fontSize: 14),
+                  decoration: const InputDecoration(
+                    hintText: "Enter your trip prompt",
+                    border: InputBorder.none,
                   ),
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  "Saved Itineraries",
+              ),
+              const SizedBox(height: 20),
+
+              // Generate button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _onGeneratePressed,
+                  child: const Text("Generate Itinerary"),
+                ),
+              ),
+              const SizedBox(height: 36),
+              Center(
+                child: const Text(
+                  "Offline Saved Itineraries",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 10),
+              ),
+              const SizedBox(height: 10),
 
-                // List of itineraries
-                Expanded(
-                  child: savedItineraries.isEmpty
-                      ? const Center(child: CircularProgressIndicator())
-                      : ListView.builder(
-                          itemCount: savedItineraries.length,
-                          itemBuilder: (context, index) {
-                            final itineraryMap =
-                                savedItineraries[index]['itinerary'];
-                            if (itineraryMap == null) return const SizedBox();
+              // List of itineraries
+              Expanded(
+                child: savedItineraries.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        reverse: true,
+                        itemCount: savedItineraries.length,
+                        itemBuilder: (context, index) {
+                          final itineraryMap =
+                              savedItineraries[index]['itinerary'];
+                          if (itineraryMap == null) return const SizedBox();
 
-                            return Card(
-                              child: ListTile(
-                                title: Text(
-                                  itineraryMap['title'] ?? 'No title',
-                                ),
-                                onTap: () {
-                                  final itineraryObj = Itinerary.fromJson(
-                                    itineraryMap,
-                                  );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ItineraryScreen(
-                                        itinerary: itineraryObj,
-                                      ),
-                                    ),
-                                  );
-                                },
+                          return Card(
+                            color: AppColors.cardBackground,
+                            margin: EdgeInsets.all(10),
+
+                            child: ListTile(
+                              title: Text(
+                                itineraryMap['title'] ?? 'No title',
+                                maxLines: 1, // restricts to 1 line
+                                overflow: TextOverflow
+                                    .ellipsis, // adds "..." if too long
                               ),
-                            );
-                          },
-                        ),
-                ),
-              ],
-            ),
+                              minTileHeight: 5,
+                              // tileColor: AppColors.cardBackground,
+                              onTap: () {
+                                final itineraryObj = Itinerary.fromJson(
+                                  itineraryMap,
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ItineraryScreen(
+                                      itinerary: itineraryObj,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
           ),
         ),
       ),
