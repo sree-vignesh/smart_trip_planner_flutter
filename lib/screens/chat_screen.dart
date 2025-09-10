@@ -245,18 +245,43 @@ class _ChatScreenState extends State<ChatScreen> {
                           hintText: isLoading
                               ? "Awaiting response..."
                               : "Type follow-up",
-                          border: const OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(120),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(120),
+                            borderSide: const BorderSide(
+                              width: 2,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(120),
+                            borderSide: const BorderSide(
+                              width: 2,
+                              color: AppColors
+                                  .primary, // different color when focused
+                            ),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     SizedBox(
-                      width: 80,
-                      child: ElevatedButton(
-                        onPressed: isLoading ? null : _sendFollowUp,
-                        child: const Text(
-                          "Send",
-                          style: TextStyle(fontSize: 10),
+                      child: InkWell(
+                        onTap: isLoading ? null : _sendFollowUp,
+                        borderRadius: BorderRadius.circular(120),
+                        child: Ink(
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBackground,
+                            borderRadius: BorderRadius.circular(120),
+                          ),
+                          padding: EdgeInsets.zero,
+                          child: Icon(
+                            Icons.telegram_outlined,
+                            size: 56,
+                            color: AppColors.primary,
+                          ),
                         ),
                       ),
                     ),
@@ -267,10 +292,15 @@ class _ChatScreenState extends State<ChatScreen> {
             // Save offline button
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
+              child: TextButton(
                 onPressed: savedOffline ? null : _saveOffline,
                 child: Text(
                   savedOffline ? "Saved (Read-only)" : "Save Offline",
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
