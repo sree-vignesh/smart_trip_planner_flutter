@@ -66,78 +66,79 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: false,
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: true, //
       appBar: AppBar(
-        // centerTitle: true,
-        title: Padding(
-          padding: const EdgeInsets.all(17.5),
-          child: const Text("Hey"),
-        ),
+        title: const Padding(padding: EdgeInsets.all(17.5), child: Text("Hey")),
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "What's your vision for this trip?",
-                style: GoogleFonts.inter(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w700,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-
-              // Prompt input box
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.primary),
-                  // border
-                ),
-                // width: 200,
-                child: TextField(
-                  controller: _controller,
-                  minLines: 4,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  style: const TextStyle(fontSize: 14),
-                  decoration: const InputDecoration(
-                    hintText: "Enter your trip prompt",
-                    border: InputBorder.none,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(
+                context,
+              ).viewInsets.bottom, // 👈 pushes above keyboard
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "What's your vision for this trip?",
+                  style: GoogleFonts.inter(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w700,
                   ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Generate button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _onGeneratePressed,
-                  child: const Text("Generate Itinerary"),
-                ),
-              ),
-              const SizedBox(height: 36),
-              Center(
-                child: const Text(
-                  "Offline Saved Itineraries",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(height: 10),
+                const SizedBox(height: 26),
 
-              // List of itineraries
-              Expanded(
-                child: savedItineraries.isEmpty
+                // Prompt input box
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.primary),
+                  ),
+                  child: TextField(
+                    controller: _controller,
+                    minLines: 4,
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                    style: const TextStyle(fontSize: 14),
+                    decoration: const InputDecoration(
+                      hintText: "Enter your trip prompt",
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Generate button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _onGeneratePressed,
+                    child: const Text("Generate Itinerary"),
+                  ),
+                ),
+                const SizedBox(height: 36),
+
+                const Center(
+                  child: Text(
+                    "Offline Saved Itineraries",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // List of itineraries
+                savedItineraries.isEmpty
                     ? const Center(child: Text("Nothing yet."))
                     : ListView.builder(
-                        // reverse: true,
+                        shrinkWrap: true, //
+                        physics: const NeverScrollableScrollPhysics(), //
                         itemCount: savedItineraries.length,
                         itemBuilder: (context, index) {
                           final itineraryMap =
@@ -146,31 +147,29 @@ class _HomePageState extends State<HomePage> {
 
                           return Card(
                             color: AppColors.cardBackground,
-                            margin: EdgeInsets.all(10),
-
+                            margin: const EdgeInsets.all(5),
                             child: ListTile(
-                              // leading: Container(
-                              // width: 12,
-                              // height: 12,
-                              // padding: EdgeInsetsGeometry.all(10),
-                              // decoration: BoxDecoration(
-                              // shape: BoxShape.circle,
-                              // color: AppColors.success,
-                              // ),
-                              // ),
+                              leading: CircleAvatar(
+                                radius: 8,
+                                backgroundColor: const Color.fromARGB(
+                                  171,
+                                  108,
+                                  231,
+                                  196,
+                                ), // Outer circle
+                                child: const CircleAvatar(
+                                  radius: 6,
+                                  backgroundColor: Color(
+                                    0xFF35AF8D,
+                                  ), // Inner circle
+                                ),
+                              ),
                               title: Text(
                                 itineraryMap['title'] ?? 'No title',
-                                maxLines: 1, // restricts to 1 line
-                                overflow: TextOverflow
-                                    .ellipsis, // adds "..." if too long
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               minTileHeight: 5,
-                              // shape: const RoundedRectangleBorder(
-                              //   borderRadius: BorderRadius.all(
-                              //     Radius.circular(200),
-                              //   ),
-                              // ),
-                              // tileColor: AppColors.cardBackground,
                               onTap: () {
                                 final itineraryObj = Itinerary.fromJson(
                                   itineraryMap,
@@ -188,8 +187,8 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                       ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

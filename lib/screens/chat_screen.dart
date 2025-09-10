@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +15,42 @@ class ChatScreen extends StatefulWidget {
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class DotsIndicator extends StatefulWidget {
+  const DotsIndicator({super.key});
+
+  @override
+  State<DotsIndicator> createState() => _DotsIndicatorState();
+}
+
+class _DotsIndicatorState extends State<DotsIndicator> {
+  int dotCount = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    // Animate every 400ms
+    Future.doWhile(() async {
+      await Future.delayed(const Duration(milliseconds: 1000));
+      if (!mounted) return false;
+      setState(() => dotCount = (dotCount + 1) % 4);
+      return true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: List.generate(
+        dotCount,
+        (_) => const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 1.5),
+          child: Text(".", style: TextStyle(fontSize: 15)),
+        ),
+      ),
+    );
+  }
 }
 
 class _ChatScreenState extends State<ChatScreen> {
@@ -36,7 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _fetchAIResponse(String prompt) async {
     setState(() {
       messages.add({"role": "user", "text": prompt});
-      messages.add({"role": "status", "text": "Thinking..."});
+      messages.add({"role": "status", "text": "Thinking"});
       isLoading = true;
     });
 
@@ -80,7 +118,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     setState(() {
       messages.add({"role": "user", "text": text});
-      messages.add({"role": "status", "text": "Rethinking..."});
+      messages.add({"role": "status", "text": "Rethinking"});
       isLoading = true;
     });
 
@@ -116,6 +154,66 @@ class _ChatScreenState extends State<ChatScreen> {
         isLoading = false;
       });
     }
+  }
+
+  Widget _buildFormattedItinerary(String text) {
+    final lines = text
+        .split("\n")
+        .where((line) => line.trim().isNotEmpty)
+        .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: lines.map((line) {
+        if (line.contains(" - ") &&
+            RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(line)) {
+          // Day header (date + summary)
+          return Padding(
+            padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
+            child: Text(
+              line,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          );
+        } else if (RegExp(r'^\d{2}:\d{2}').hasMatch(line)) {
+          // Time + activity
+          return Padding(
+            padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("•  "),
+                Expanded(
+                  child: Text(
+                    line,
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          // Fallback plain text
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 6.0),
+            child: Text(
+              line,
+              style: GoogleFonts.inter(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          );
+        }
+      }).toList(),
+    );
   }
 
   /// Save the latest itinerary offline
@@ -213,14 +311,44 @@ class _ChatScreenState extends State<ChatScreen> {
                               ],
                             ),
                             const SizedBox(height: 8),
+
                             // Message text
-                            Text(
-                              msg['text'] ?? "",
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                            if (isStatus)
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      year2023: false,
+                                      color: Colors.greenAccent,
+                                      backgroundColor: Colors.cyanAccent,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    msg['text'] ?? "",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      // fontStyle: FontStyle.italic,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  const DotsIndicator(),
+                                ],
+                              )
+                            else if (role == "ai")
+                              _buildFormattedItinerary(msg['text'] ?? "")
+                            else
+                              Text(
+                                msg['text'] ?? "",
+                                style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
                             const SizedBox(height: 24),
                           ],
                         ),
@@ -298,7 +426,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   savedOffline ? "Saved (Read-only)" : "Save Offline",
                   style: GoogleFonts.inter(
                     fontSize: 18,
-                    color: Colors.black,
+                    color: savedOffline ? Colors.grey : Colors.black,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
