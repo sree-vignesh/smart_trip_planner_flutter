@@ -61,6 +61,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Map<String, dynamic>? _latestItineraryData;
   final ItineraryApiService apiService = ItineraryApiService(
+    // baseUrl: 'https://smart-trip-planner-server.vercel.app/itinerary',
     baseUrl: 'http://192.168.31.162:8080/itinerary',
   );
 
@@ -125,7 +126,12 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.clear();
 
     try {
-      final data = await apiService.fetchItinerary(text);
+      final data = await apiService.fetchItinerary(
+        text,
+        prevItinerary: _latestItineraryData,
+      );
+      if (!mounted) return; // ensure widget is still alive
+
       _latestItineraryData = data;
 
       final itinerary = Itinerary.fromJson(data['itinerary']);
@@ -145,6 +151,7 @@ class _ChatScreenState extends State<ChatScreen> {
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return; // ensure widget is still alive
       setState(() {
         messages.removeWhere((m) => m['role'] == 'status');
         messages.add({
@@ -369,10 +376,16 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: TextField(
                         controller: _controller,
                         enabled: !isLoading,
+
                         decoration: InputDecoration(
                           hintText: isLoading
-                              ? "Awaiting response..."
-                              : "Type follow-up",
+                              ? "   Awaiting response..."
+                              : "   Type follow-up",
+                          hintStyle: TextStyle(
+                            // fontFamily: 'mono',
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w400,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(120),
                           ),
@@ -408,7 +421,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Icon(
                             Icons.telegram_outlined,
                             size: 56,
-                            color: AppColors.primary,
+                            color: !isLoading ? AppColors.primary : Colors.grey,
                           ),
                         ),
                       ),

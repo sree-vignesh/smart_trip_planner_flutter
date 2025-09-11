@@ -5,8 +5,12 @@ import 'package:smart_trip_planner/screens/home_page.dart';
 import 'screens/itinerary_screen.dart';
 import 'models/itinerary.dart';
 import 'services/json_service.dart';
+import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
