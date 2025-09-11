@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> savedItineraries = [];
+  Set<int> selectedIndices = {}; // Track selected items
 
   @override
   void initState() {
@@ -25,12 +26,10 @@ class _HomePageState extends State<HomePage> {
     _loadItineraries();
   }
 
-  // Load both JSON asset and SharedPreferences saved itineraries
   Future<void> _loadItineraries() async {
     final String jsonStr = await rootBundle.loadString(
       'assets/itineraries.json',
     );
-    // final List<dynamic> assetData = jsonDecode(jsonStr);
     final List<dynamic> assetData = jsonDecode(jsonStr);
 
     final prefs = await SharedPreferences.getInstance();
@@ -62,26 +61,58 @@ class _HomePageState extends State<HomePage> {
     _loadItineraries();
   }
 
+  void _toggleSelection(int index) {
+    setState(() {
+      if (selectedIndices.contains(index)) {
+        selectedIndices.remove(index);
+      } else {
+        selectedIndices.add(index);
+      }
+    });
+  }
+
+  void _deleteSelected() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      savedItineraries.removeWhere(
+        (item) => selectedIndices.contains(savedItineraries.indexOf(item)),
+      );
+      selectedIndices.clear();
+    });
+    final offlineList = savedItineraries.map((e) => jsonEncode(e)).toList();
+    await prefs.setStringList("saved_itineraries", offlineList);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isSelectionMode = selectedIndices.isNotEmpty;
+
     return Scaffold(
       extendBodyBehindAppBar: false,
-      resizeToAvoidBottomInset: true, //
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Padding(padding: EdgeInsets.all(17.5), child: Text("Hey")),
+        title: Text(
+          isSelectionMode ? "${selectedIndices.length} selected" : "Hey",
+        ),
+        actions: [
+          if (isSelectionMode)
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.redAccent),
+              onPressed: _deleteSelected,
+            ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: SingleChildScrollView(
             padding: EdgeInsets.only(
-              bottom: MediaQuery.of(
-                context,
-              ).viewInsets.bottom, // 👈 pushes above keyboard
+              bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Prompt input section
                 Text(
                   "What's your vision for this trip?",
                   style: GoogleFonts.inter(
@@ -91,8 +122,6 @@ class _HomePageState extends State<HomePage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 26),
-
-                // Prompt input box
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -113,8 +142,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // Generate button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -123,7 +150,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 36),
-
                 const Center(
                   child: Text(
                     "Offline Saved Itineraries",
@@ -137,40 +163,22 @@ class _HomePageState extends State<HomePage> {
                 savedItineraries.isEmpty
                     ? const Center(child: Text("Nothing yet."))
                     : ListView.builder(
-                        shrinkWrap: true, //
-                        physics: const NeverScrollableScrollPhysics(), //
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: savedItineraries.length,
                         itemBuilder: (context, index) {
                           final itineraryMap =
                               savedItineraries[index]['itinerary'];
                           if (itineraryMap == null) return const SizedBox();
 
-                          return Card(
-                            color: AppColors.cardBackground,
-                            margin: const EdgeInsets.all(5),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                radius: 8,
-                                backgroundColor: const Color.fromARGB(
-                                  171,
-                                  108,
-                                  231,
-                                  196,
-                                ), // Outer circle
-                                child: const CircleAvatar(
-                                  radius: 6,
-                                  backgroundColor: Color(
-                                    0xFF35AF8D,
-                                  ), // Inner circle
-                                ),
-                              ),
-                              title: Text(
-                                itineraryMap['title'] ?? 'No title',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              minTileHeight: 5,
-                              onTap: () {
+                          final isSelected = selectedIndices.contains(index);
+
+                          return GestureDetector(
+                            onLongPress: () => _toggleSelection(index),
+                            onTap: () {
+                              if (isSelectionMode) {
+                                _toggleSelection(index);
+                              } else {
                                 final itineraryObj = Itinerary.fromJson(
                                   itineraryMap,
                                 );
@@ -182,7 +190,41 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                 );
-                              },
+                              }
+                            },
+                            child: Card(
+                              color: isSelected
+                                  ? AppColors.error
+                                  : AppColors.cardBackground,
+                              margin: const EdgeInsets.all(5),
+                              child: ListTile(
+                                dense: true,
+                                leading: CircleAvatar(
+                                  radius: 8,
+                                  backgroundColor: const Color.fromARGB(
+                                    171,
+                                    108,
+                                    231,
+                                    196,
+                                  ),
+                                  child: const CircleAvatar(
+                                    radius: 6,
+                                    backgroundColor: Color(0xFF35AF8D),
+                                  ),
+                                ),
+                                title: Text(
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+
+                                  itineraryMap['title'] ?? 'No title',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ),
                           );
                         },

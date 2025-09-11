@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Smart Trip Planner',
       theme: ThemeData(
         textTheme: GoogleFonts.interTextTheme(),
@@ -51,6 +52,19 @@ class MyApp extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
+        ),
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: AppColors.primary, // Default background
+          contentTextStyle: GoogleFonts.inter(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          behavior: SnackBarBehavior.floating, // Makes all SnackBars floating
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(120),
+          ),
+          elevation: 16,
         ),
       ),
       home: HomePage(),

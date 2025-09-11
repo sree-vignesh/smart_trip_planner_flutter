@@ -6,12 +6,22 @@ class ItineraryApiService {
 
   ItineraryApiService({required this.baseUrl});
 
-  Future<Map<String, dynamic>> fetchItinerary(String prompt) async {
+  Future<Map<String, dynamic>> fetchItinerary(
+    String prompt, {
+    Map<String, dynamic>? prevItinerary, // <-- add optional previous itinerary
+  }) async {
     final uri = Uri.parse(baseUrl);
+
+    final body = {
+      'prompt': prompt,
+      if (prevItinerary != null)
+        'prevItinerary': prevItinerary, // include if available
+    };
+
     final response = await http.post(
       uri,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'prompt': prompt}),
+      body: jsonEncode(body),
     );
 
     if (response.statusCode == 200) {
