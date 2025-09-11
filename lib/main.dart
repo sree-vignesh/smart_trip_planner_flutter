@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_trip_planner/core/colors.dart';
 import 'package:smart_trip_planner/screens/home_page.dart';
+import 'package:smart_trip_planner/screens/sign_in_screen.dart';
 import 'screens/itinerary_screen.dart';
 import 'models/itinerary.dart';
 import 'services/json_service.dart';
@@ -72,6 +74,20 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: HomePage(),
+      // home: StreamBuilder<User?>(
+      //   stream: FirebaseAuth.instance.authStateChanges(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return const Center(child: CircularProgressIndicator());
+      //     }
+      //     if (snapshot.hasData) {
+      //       // User is logged in → go to HomePage
+      //       return const HomePage();
+      //     }
+      //     // User not logged in → go to SignInPage
+      //     return const SignInPage();
+      //   },
+      // ),
     );
   }
 }

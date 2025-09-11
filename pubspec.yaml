@@ -30,11 +30,13 @@ environment:
 dependencies:
   build_runner: null
   cupertino_icons: ^1.0.8
+  firebase_auth: ^6.0.2
   firebase_core: ^4.1.0
   flutter:
     sdk: flutter
   flutter_riverpod: null
   google_fonts: null
+  google_sign_in: ^7.1.1
   http: null
   json_annotation: null
   json_serializable: null
@@ -42,12 +44,6 @@ dependencies:
   url_launcher: null
 
 dev_dependencies:
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
