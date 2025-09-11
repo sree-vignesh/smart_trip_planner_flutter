@@ -21,56 +21,69 @@ class AccountScreen extends StatelessWidget {
             children: [
               if (user != null) ...[
                 // Profile card
-                Card(
-                  // clipBehavior: ,
-                  color: AppColors.cardBackground,
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  margin: const EdgeInsets.only(bottom: 20),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 24.0),
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundImage: user.photoURL != null
-                                ? NetworkImage(user.photoURL!)
-                                : const AssetImage(
-                                        'assets/images/default_avatar.png',
-                                      )
-                                      as ImageProvider,
+                SizedBox(
+                  height: 150,
+                  width: 300,
+                  child: Card(
+                    // clipBehavior: ,
+                    color: AppColors.cardBackground,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    margin: const EdgeInsets.only(bottom: 20),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 24.0),
+                            child: CircleAvatar(
+                              radius: 30,
+                              backgroundColor: Colors.grey[300],
+                              backgroundImage: user.photoURL != null
+                                  ? NetworkImage(user.photoURL!)
+                                  : null,
+                              child: user.photoURL == null
+                                  ? const Icon(
+                                      Icons.person,
+                                      color: AppColors.primary,
+                                      size: 40,
+                                    )
+                                  : null,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        const Divider(height: 20, thickness: 1),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user.displayName ?? "N/A",
-                              style: GoogleFonts.inter(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                              ),
+                          const SizedBox(height: 16),
+                          const Divider(height: 20, thickness: 1),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.displayName ?? "Guest",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  user.email ?? "N/A",
+
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              user.email ?? "N/A",
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.inter(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

@@ -90,17 +90,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final isSelectionMode = selectedIndices.isNotEmpty;
     final user = FirebaseAuth.instance.currentUser;
-    // final userPhoto = user?.photoURL ?? null;
+    final userPhoto = user?.photoURL ?? null;
 
     return Scaffold(
       extendBodyBehindAppBar: false,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         toolbarHeight: 100,
         title: Text(
           isSelectionMode
               ? "${selectedIndices.length} selected"
-              : "Hey ${user?.displayName} !",
+              : "Hey ${user?.displayName ?? "Guest"} !",
         ),
         actions: [
           if (isSelectionMode)
@@ -126,12 +127,12 @@ class _HomePageState extends State<HomePage> {
                 child: CircleAvatar(
                   radius: 20,
                   backgroundColor: Colors.grey[300], // fallback background
-                  //   backgroundImage: userPhoto != null
-                  //       ? NetworkImage(userPhoto!)
-                  //       : null,
-                  //   child: userPhoto == null
-                  //       ? const Icon(Icons.person, color: Colors.black)
-                  //       : null,
+                  backgroundImage: userPhoto != null
+                      ? NetworkImage(userPhoto!)
+                      : null,
+                  child: userPhoto == null
+                      ? const Icon(Icons.person, color: AppColors.primary)
+                      : null,
                 ),
               ),
             ),
