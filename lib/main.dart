@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      routes: {'/login': (context) => const SignInPage()},
       debugShowCheckedModeBanner: false,
       title: 'Smart Trip Planner',
       theme: ThemeData(
@@ -31,11 +32,11 @@ class MyApp extends StatelessWidget {
         primaryColor: AppColors.primary,
         appBarTheme: AppBarTheme(
           surfaceTintColor: Colors.transparent,
-          toolbarHeight: 90,
+          toolbarHeight: 75,
           backgroundColor: AppColors.background,
           foregroundColor: AppColors.primary,
           titleTextStyle: GoogleFonts.inter(
-            fontSize: 32,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
             color: AppColors.primary,
           ),
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         // Elevated Button Global Theme
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            elevation: 8,
             backgroundColor: AppColors.primary, // button background
             foregroundColor: Colors.white, // text color
             minimumSize: const Size(
@@ -73,21 +75,21 @@ class MyApp extends StatelessWidget {
           elevation: 16,
         ),
       ),
-      home: HomePage(),
-      // home: StreamBuilder<User?>(
-      //   stream: FirebaseAuth.instance.authStateChanges(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return const Center(child: CircularProgressIndicator());
-      //     }
-      //     if (snapshot.hasData) {
-      //       // User is logged in → go to HomePage
-      //       return const HomePage();
-      //     }
-      //     // User not logged in → go to SignInPage
-      //     return const SignInPage();
-      //   },
-      // ),
+      // home: HomePage(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasData) {
+            // User is logged in → go to HomePage
+            return const HomePage();
+          }
+          // User not logged in → go to SignInPage
+          return const SignInPage();
+        },
+      ),
     );
   }
 }

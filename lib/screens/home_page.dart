@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
@@ -7,6 +8,7 @@ import 'package:smart_trip_planner/core/colors.dart';
 import 'package:smart_trip_planner/models/itinerary.dart';
 import 'package:smart_trip_planner/screens/itinerary_screen.dart';
 import 'package:smart_trip_planner/screens/chat_screen.dart';
+import 'package:smart_trip_planner/screens/user_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> savedItineraries = [];
   Set<int> selectedIndices = {}; // Track selected items
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -86,19 +89,51 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final isSelectionMode = selectedIndices.isNotEmpty;
+    final user = FirebaseAuth.instance.currentUser;
+    // final userPhoto = user?.photoURL ?? null;
 
     return Scaffold(
       extendBodyBehindAppBar: false,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        toolbarHeight: 100,
         title: Text(
-          isSelectionMode ? "${selectedIndices.length} selected" : "Hey",
+          isSelectionMode
+              ? "${selectedIndices.length} selected"
+              : "Hey ${user?.displayName} !",
         ),
         actions: [
           if (isSelectionMode)
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.redAccent),
-              onPressed: _deleteSelected,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: IconButton(
+                icon: const Icon(Icons.delete, color: Colors.redAccent),
+                onPressed: _deleteSelected,
+              ),
+            )
+          else
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AccountScreen(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.grey[300], // fallback background
+                  //   backgroundImage: userPhoto != null
+                  //       ? NetworkImage(userPhoto!)
+                  //       : null,
+                  //   child: userPhoto == null
+                  //       ? const Icon(Icons.person, color: Colors.black)
+                  //       : null,
+                ),
+              ),
             ),
         ],
       ),
@@ -113,6 +148,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Prompt input section
+                // const SizedBox(height: 30),
                 Text(
                   "What's your vision for this trip?",
                   style: GoogleFonts.inter(
@@ -163,6 +199,7 @@ class _HomePageState extends State<HomePage> {
                 savedItineraries.isEmpty
                     ? const Center(child: Text("Nothing yet."))
                     : ListView.builder(
+                        reverse: true,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: savedItineraries.length,

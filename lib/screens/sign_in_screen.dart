@@ -21,16 +21,21 @@ class _SignInPageState extends State<SignInPage> {
       emailController.text.trim(),
       passwordController.text.trim(),
     );
-    if (user != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
-      );
-    }
+    // if (user != null) {
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(builder: (_) => const HomePage()),
+    //   );
+    // }
   }
 
   Future<void> _signInWithGoogle() async {
-    final user = await _authService.signInWithGoogle();
+    await _authService.initializeGoogleSignIn(
+      serverClientId:
+          '561584619861-6pvdk7t5pu3evrhb80smdc98fp8cfath.apps.googleusercontent.com',
+    ); // returns User?
+    // final user = await _authService.initializeGoogleSignIn();
+    final user = await _authService.attemptInitialSignIn(); // returns User?
     if (user != null) {
       Navigator.pushReplacement(
         context,

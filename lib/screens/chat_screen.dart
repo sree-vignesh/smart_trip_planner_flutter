@@ -1,11 +1,13 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_trip_planner/core/colors.dart';
 import 'dart:convert';
 import 'package:smart_trip_planner/models/itinerary.dart';
+import 'package:smart_trip_planner/screens/user_screen.dart';
 import '../services/itinerary_api_service.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -58,12 +60,14 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, String>> messages = [];
   bool savedOffline = false;
   bool isLoading = false; // Track API request state
+  final ScrollController _scrollController = ScrollController();
 
   Map<String, dynamic>? _latestItineraryData;
   final ItineraryApiService apiService = ItineraryApiService(
     // baseUrl: 'https://smart-trip-planner-server.vercel.app/itinerary',
     baseUrl: 'http://192.168.31.162:8080/itinerary',
   );
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -100,14 +104,33 @@ class _ChatScreenState extends State<ChatScreen> {
         messages.add({"role": "ai", "text": itineraryText.toString()});
         isLoading = false;
       });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
     } catch (e) {
       setState(() {
         messages.removeWhere((m) => m['role'] == 'status');
         messages.add({
           "role": "ai",
           "text": "Oops! The LLM failed to generate answer. Please regenerate.",
+          "type": "error",
         });
         isLoading = false;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
       });
     }
   }
@@ -150,6 +173,15 @@ class _ChatScreenState extends State<ChatScreen> {
         messages.add({"role": "ai", "text": itineraryText.toString()});
         isLoading = false;
       });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
     } catch (e) {
       if (!mounted) return; // ensure widget is still alive
       setState(() {
@@ -157,8 +189,18 @@ class _ChatScreenState extends State<ChatScreen> {
         messages.add({
           "role": "ai",
           "text": "Oops! The LLM failed to generate answer. Please regenerate.",
+          "type": "error",
         });
         isLoading = false;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
       });
     }
   }
@@ -243,13 +285,36 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final userPhoto = user?.photoURL;
+
     return Scaffold(
       appBar: AppBar(
+        // toolbarHeight
         title: const Text(
           "Home",
           style: TextStyle(color: Colors.black, fontSize: 24),
         ),
-        toolbarHeight: 56,
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AccountScreen()),
+              );
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: CircleAvatar(
+                radius: 18,
+                backgroundImage: NetworkImage(userPhoto!),
+
+                // optional: backgroundImage: NetworkImage(user.photoURL ?? ''),
+              ),
+            ),
+          ),
+        ],
+        toolbarHeight: 100,
       ),
       body: SafeArea(
         child: Column(
@@ -257,6 +322,7 @@ class _ChatScreenState extends State<ChatScreen> {
             // Messages list
             Expanded(
               child: ListView.builder(
+                controller: _scrollController,
                 padding: const EdgeInsets.all(12),
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
@@ -264,6 +330,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   final role = msg['role'];
                   final isUser = role == 'user';
                   final isStatus = role == 'status';
+                  final isError = role == 'type';
+                  print(
+                    'msg type: ${msg['type']}',
+                  ); // see what value it actually has
 
                   return Align(
                     alignment: Alignment.center,
@@ -295,20 +365,35 @@ class _ChatScreenState extends State<ChatScreen> {
                               children: [
                                 // Circle avatar
                                 const SizedBox(height: 50),
-                                Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: msg['role'] == 'user'
-                                        ? Colors.green
-                                        : Colors.orange,
-                                  ),
-                                ),
+                                msg['role'] == 'user'
+                                    ? CircleAvatar(
+                                        radius: 16,
+                                        backgroundImage: NetworkImage(
+                                          userPhoto!,
+                                        ),
+
+                                        // optional: backgroundImage: NetworkImage(user.photoURL ?? ''),
+                                      )
+                                    : Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: AppColors.secondary,
+                                        ),
+                                        child: Icon(
+                                          Icons.message_rounded,
+                                          size: 18,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+
                                 const SizedBox(width: 16),
                                 // Name
                                 Text(
-                                  msg['role'] == 'user' ? 'User' : 'Itinera AI',
+                                  msg['role'] == 'user'
+                                      ? '${user?.displayName}'
+                                      : 'Itinera AI',
                                   style: GoogleFonts.inter(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -329,8 +414,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
                                       year2023: false,
-                                      color: Colors.greenAccent,
-                                      backgroundColor: Colors.cyanAccent,
+                                      color: Colors.cyanAccent,
+                                      backgroundColor: Colors.greenAccent,
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -354,6 +439,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                 style: GoogleFonts.inter(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
+
+                                  color:
+                                      (msg['type']?.toString() ?? '') == 'error'
+                                      ? Colors.red
+                                      : Colors.black,
                                 ),
                               ),
                             const SizedBox(height: 24),
@@ -378,9 +468,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         enabled: !isLoading,
 
                         decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(left: 30),
+                          filled: true,
+                          fillColor: isLoading
+                              ? Colors.grey.shade100
+                              : Colors.white,
                           hintText: isLoading
-                              ? "   Awaiting response..."
-                              : "   Type follow-up",
+                              ? "Awaiting response..."
+                              : "Type follow-up",
                           hintStyle: TextStyle(
                             // fontFamily: 'mono',
                             color: Colors.grey,
