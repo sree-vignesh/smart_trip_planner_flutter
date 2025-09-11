@@ -43,6 +43,7 @@ dependencies:
   json_serializable: null
   shared_preferences: null
   url_launcher: null
+  cloud_firestore: ^6.0.1
 
 dev_dependencies:
   flutter_lints: ^5.0.0

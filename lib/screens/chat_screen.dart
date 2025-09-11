@@ -8,6 +8,7 @@ import 'package:smart_trip_planner/core/colors.dart';
 import 'dart:convert';
 import 'package:smart_trip_planner/models/itinerary.dart';
 import 'package:smart_trip_planner/screens/user_screen.dart';
+import 'package:smart_trip_planner/services/search_service.dart';
 import '../services/itinerary_api_service.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -56,6 +57,8 @@ class _DotsIndicatorState extends State<DotsIndicator> {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final SearchService _searchService = SearchService();
+
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> messages = [];
   bool savedOffline = false;
@@ -64,8 +67,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Map<String, dynamic>? _latestItineraryData;
   final ItineraryApiService apiService = ItineraryApiService(
-    // baseUrl: 'https://smart-trip-planner-server.vercel.app/itinerary',
-    baseUrl: 'http://192.168.31.162:8080/itinerary',
+    baseUrl: 'https://smart-trip-planner-server.vercel.app/itinerary',
+    // baseUrl: 'http://192.168.31.162:8080/itinerary',
   );
   final user = FirebaseAuth.instance.currentUser;
 
@@ -84,6 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     try {
+      _searchService.logUserSearch(prompt);
       final data = await apiService.fetchItinerary(prompt);
       _latestItineraryData = data;
 
@@ -149,6 +153,8 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.clear();
 
     try {
+      _searchService.logUserSearch(_latestItineraryData.toString());
+
       final data = await apiService.fetchItinerary(
         text,
         prevItinerary: _latestItineraryData,
@@ -509,7 +515,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         borderRadius: BorderRadius.circular(120),
                         child: Ink(
                           decoration: BoxDecoration(
-                            color: AppColors.cardBackground,
+                            color: AppColors.background,
                             borderRadius: BorderRadius.circular(120),
                           ),
                           padding: EdgeInsets.zero,
