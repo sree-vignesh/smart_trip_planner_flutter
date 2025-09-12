@@ -139,6 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
           "role": "ai",
           "text": itinerary.toJson(),
           "itinerary": itinerary.toJson(),
+          "isSaved": false, // per-message saved state
         });
         isLoading = false;
       });
@@ -226,6 +227,7 @@ class _ChatScreenState extends State<ChatScreen> {
           "role": "ai",
           "text": itinerary.toJson(),
           "itinerary": itinerary.toJson(),
+          "isSaved": false, // per-message saved state
         });
         isLoading = false;
       });
@@ -262,7 +264,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   bool isSaved = false;
-  Widget _buildItineraryFromJson(Map<String, dynamic> itineraryJson) {
+  Widget _buildItineraryFromJson(Map<String, dynamic> itineraryJson, msg) {
     final itinerary = Itinerary.fromJson(itineraryJson);
 
     return Column(
@@ -451,28 +453,22 @@ class _ChatScreenState extends State<ChatScreen> {
                     minimumSize: const Size(0, 33), // ✅ compact height
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  icon: isSaved
+                  icon: msg['isSaved']
                       ? FaIcon(FontAwesomeIcons.check)
                       : FaIcon(
                           FontAwesomeIcons.download,
                           size: 12,
-                          color: isSaved ? Colors.black : Colors.grey,
+                          color: msg['isSaved'] ? Colors.black : Colors.grey,
                         ),
                   onPressed: () async {
-                    print("Before save: $isSaved");
-
                     final result = await _saveOffline(itineraryJson);
-                    print("Save result: $result");
-
-                    if (!mounted) return; // safety: widget may be disposed
+                    if (!mounted) return;
                     setState(() {
-                      isSaved = result;
+                      msg['isSaved'] = result; // update per-message saved state
                     });
-
-                    print("After save: $isSaved");
                   },
                   label: Text(
-                    isSaved ? "Saved" : "Save",
+                    msg['isSaved'] ? "Saved" : "Save",
                     style: GoogleFonts.inter(
                       fontWeight: FontWeight.bold,
                       // color: Colors.grey,
@@ -613,7 +609,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   final role = msg['role'];
                   final isUser = role == 'user';
                   final isStatus = role == 'status';
-                  final isError = role == 'type';
+                  // final isError = role == 'type';
+                  final isError = msg['type']?.toString() == 'error';
+
                   print(
                     'msg type: ${msg['type']}',
                   ); // see what value it actually has
@@ -722,7 +720,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             // else if (role == "ai")
                             //   _buildFormattedItinerary(msg['text'] ?? "")
                             else if (role == "ai" && msg['itinerary'] != null)
-                              _buildItineraryFromJson(msg['itinerary'])
+                              _buildItineraryFromJson(msg['itinerary'], msg)
                             else
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
