@@ -4,8 +4,8 @@
 
 # Smart Trip Planner
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter)](https://flutter.dev/)
-[![Dart](https://img.shields.io/badge/Dart-3.x-blue?logo=dart)](https://dart.dev/)
+[![Flutter](https://img.shields.io/badge/Flutter-blue?logo=flutter)](https://flutter.dev/)
+[![Dart](https://img.shields.io/badge/Dart-blue?logo=dart)](https://dart.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 ````markdown
