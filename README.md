@@ -1,10 +1,10 @@
-Perfect! Here's a **polished `README.md`** with **badges** and tweaks so that Mermaid diagrams render nicely on GitHub. GitHub supports Mermaid, but you should wrap them in triple backticks with `mermaid` for rendering.
+#[Server Repo](https://github.com/sree-vignesh/smart_trip_planner_server)
 
 ---
 
-````markdown
 # Smart Trip Planner
 
+````markdown
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-3.x-blue?logo=dart)](https://dart.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
