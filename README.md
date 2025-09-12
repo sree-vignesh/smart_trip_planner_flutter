@@ -4,11 +4,11 @@
 
 # Smart Trip Planner
 
-````markdown
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-3.x-blue?logo=dart)](https://dart.dev/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
+````markdown
 Smart Trip Planner is a Flutter app that generates AI-driven travel itineraries based on natural language input. Users can describe their trip (location, duration, preferences), and the AI produces a day-by-day plan with activities, times, and locations.
 
 ---
