@@ -19,7 +19,7 @@ Map<String, dynamic> _$ItineraryToJson(Itinerary instance) => <String, dynamic>{
   'title': instance.title,
   'startDate': instance.startDate,
   'endDate': instance.endDate,
-  'days': instance.days,
+  'days': instance.days.map((e) => e.toJson()).toList(),
 };
 
 Day _$DayFromJson(Map<String, dynamic> json) => Day(
@@ -33,7 +33,7 @@ Day _$DayFromJson(Map<String, dynamic> json) => Day(
 Map<String, dynamic> _$DayToJson(Day instance) => <String, dynamic>{
   'date': instance.date,
   'summary': instance.summary,
-  'items': instance.items,
+  'items': instance.items.map((e) => e.toJson()).toList(),
 };
 
 ActivityItem _$ActivityItemFromJson(Map<String, dynamic> json) => ActivityItem(

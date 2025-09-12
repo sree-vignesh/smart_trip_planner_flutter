@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'itinerary.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true) // <-- add explicitToJson
 class Itinerary {
   final String title;
   final String startDate;
@@ -21,7 +21,7 @@ class Itinerary {
   Map<String, dynamic> toJson() => _$ItineraryToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true) // <-- add explicitToJson
 class Day {
   final String date;
   final String summary;
