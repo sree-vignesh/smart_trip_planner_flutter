@@ -7,19 +7,28 @@ class ItineraryScreen extends StatelessWidget {
   final Itinerary itinerary;
   const ItineraryScreen({required this.itinerary, super.key});
 
-  Future<void> _openMap(BuildContext context, String location) async {
-    final loc = location.isNotEmpty ? location : "0,0";
-    final encodedLocation = Uri.encodeComponent(loc);
-    final uri = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=$encodedLocation',
+  Future<void> _openMap(
+    BuildContext context,
+    String location,
+    String activity,
+  ) async {
+    if (location.isEmpty) location = "0,0";
+    final latLng = location.split(',');
+    final lat = latLng[0];
+    final lng = latLng[1];
+    print(activity);
+
+    final geoUri = Uri.parse('geo:$lat,$lng?q=$lat,$lng($activity)');
+    final browserUri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
     );
 
     try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error opening map: $e')));
+      // Try launching geo URI directly
+      await launchUrl(geoUri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      // fallback to browser
+      await launchUrl(browserUri, mode: LaunchMode.externalApplication);
     }
   }
 
@@ -105,7 +114,7 @@ class ItineraryScreen extends StatelessWidget {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
+                                  const SizedBox(height: 0),
                                   Row(
                                     children: [
                                       Expanded(
@@ -120,15 +129,17 @@ class ItineraryScreen extends StatelessWidget {
                                       IconButton(
                                         icon: const Icon(
                                           Icons.map_rounded,
-                                          color: Colors.blueAccent,
+                                          color: AppColors.primary,
                                         ),
                                         onPressed: () => _openMap(
                                           context,
                                           activity.location,
+                                          activity.activity,
                                         ),
                                       ),
                                     ],
                                   ),
+                                  const SizedBox(height: 5),
                                 ],
                               ),
                             ),
