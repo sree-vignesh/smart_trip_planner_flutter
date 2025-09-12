@@ -29,6 +29,16 @@ class _HomePageState extends State<HomePage> {
     _loadItineraries();
   }
 
+  void _toggleSelection(int index) {
+    setState(() {
+      if (selectedIndices.contains(index)) {
+        selectedIndices.remove(index);
+      } else {
+        selectedIndices.add(index);
+      }
+    });
+  }
+
   Future<void> _loadItineraries() async {
     final String jsonStr = await rootBundle.loadString(
       'assets/itineraries.json',
@@ -39,17 +49,33 @@ class _HomePageState extends State<HomePage> {
     final List<String> offlineList =
         prefs.getStringList("saved_itineraries") ?? [];
 
+    print(offlineList);
+
     final List<Map<String, dynamic>> offlineData = offlineList.map((str) {
       final Map<String, dynamic> map = jsonDecode(str);
       return map.cast<String, dynamic>();
     }).toList();
 
+    if (!mounted) return; // ✅ prevent crash
     setState(() {
       savedItineraries = [
         ...offlineData,
         // ...assetData.map((e) => e.cast<String, dynamic>()),
       ];
     });
+  }
+
+  void _deleteSelected() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return; // ✅ prevent crash
+    setState(() {
+      savedItineraries.removeWhere(
+        (item) => selectedIndices.contains(savedItineraries.indexOf(item)),
+      );
+      selectedIndices.clear();
+    });
+    final offlineList = savedItineraries.map((e) => jsonEncode(e)).toList();
+    await prefs.setStringList("saved_itineraries", offlineList);
   }
 
   void _onGeneratePressed() async {
@@ -61,29 +87,8 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(builder: (context) => ChatScreen(prompt: prompt)),
     );
 
+    if (!mounted) return; // ✅ prevent crash
     _loadItineraries();
-  }
-
-  void _toggleSelection(int index) {
-    setState(() {
-      if (selectedIndices.contains(index)) {
-        selectedIndices.remove(index);
-      } else {
-        selectedIndices.add(index);
-      }
-    });
-  }
-
-  void _deleteSelected() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      savedItineraries.removeWhere(
-        (item) => selectedIndices.contains(savedItineraries.indexOf(item)),
-      );
-      selectedIndices.clear();
-    });
-    final offlineList = savedItineraries.map((e) => jsonEncode(e)).toList();
-    await prefs.setStringList("saved_itineraries", offlineList);
   }
 
   @override
@@ -128,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                   radius: 20,
                   backgroundColor: Colors.grey[300], // fallback background
                   backgroundImage: userPhoto != null
-                      ? NetworkImage(userPhoto!)
+                      ? NetworkImage(userPhoto)
                       : null,
                   child: userPhoto == null
                       ? const Icon(Icons.person, color: AppColors.primary)
@@ -205,8 +210,7 @@ class _HomePageState extends State<HomePage> {
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: savedItineraries.length,
                         itemBuilder: (context, index) {
-                          final itineraryMap =
-                              savedItineraries[index]['itinerary'];
+                          final itineraryMap = savedItineraries[index];
                           if (itineraryMap == null) return const SizedBox();
 
                           final isSelected = selectedIndices.contains(index);
