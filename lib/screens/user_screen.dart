@@ -101,8 +101,10 @@ class AccountScreen extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     elevation: 0,
-                    backgroundColor: AppColors.cardBackground,
+                    // backgroundColor: AppColors.cardBackground,
+                    backgroundColor: Colors.red.shade50,
                     foregroundColor: Colors.redAccent,
+                    // foregroundColor: Colors.white,
                     minimumSize: Size.zero,
                     // maximumSize: Size(10, 10),
                     padding: const EdgeInsets.symmetric(

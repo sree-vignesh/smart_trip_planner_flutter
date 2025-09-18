@@ -116,6 +116,9 @@ class ItineraryScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 0),
                                   Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.alphabetic,
                                     children: [
                                       Expanded(
                                         child: Text(
@@ -128,7 +131,7 @@ class ItineraryScreen extends StatelessWidget {
                                       ),
                                       IconButton(
                                         icon: const Icon(
-                                          Icons.map_rounded,
+                                          Icons.fmd_good_rounded,
                                           color: AppColors.primary,
                                         ),
                                         onPressed: () => _openMap(
