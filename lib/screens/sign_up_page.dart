@@ -18,6 +18,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  bool _obscuretext = true;
 
   Future<void> _signUp() async {
     final email = emailController.text.trim();
@@ -175,7 +176,7 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(height: 16),
               TextField(
                 controller: passwordController,
-                obscureText: true,
+                obscureText: _obscuretext,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -186,9 +187,17 @@ class _SignUpPageState extends State<SignUpPage> {
                     Icons.lock_outline,
                     color: Colors.grey.shade400,
                   ),
-                  suffixIcon: Icon(
-                    Icons.visibility_off,
-                    color: Colors.grey.shade400,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      // Icons.visibility_off,
+                      _obscuretext ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.grey.shade400,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscuretext = !_obscuretext;
+                      });
+                    },
                   ), // you can toggle this for show/hide
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -206,7 +215,7 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(height: 16),
               TextField(
                 controller: confirmPasswordController,
-                obscureText: true,
+                obscureText: _obscuretext,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -217,9 +226,18 @@ class _SignUpPageState extends State<SignUpPage> {
                     Icons.lock_outline,
                     color: Colors.grey.shade400,
                   ),
-                  suffixIcon: Icon(
-                    Icons.visibility_off,
-                    color: Colors.grey.shade400,
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _obscuretext = !_obscuretext;
+                      });
+                    },
+                    icon: Icon(
+                      // Icons.visibility_off,
+                      _obscuretext ? Icons.visibility_off : Icons.visibility,
+
+                      color: Colors.grey.shade400,
+                    ),
                   ), // you can toggle this for show/hide
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
