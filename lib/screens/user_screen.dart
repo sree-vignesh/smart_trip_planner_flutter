@@ -11,7 +11,10 @@ class AccountScreen extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Account")),
+      appBar: AppBar(
+        title: const Text("Account"),
+        backgroundColor: AppColors.cardBackground,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
